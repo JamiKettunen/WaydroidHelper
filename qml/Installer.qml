@@ -191,7 +191,7 @@ Page {
             title: "Disclaimer!"
 
             Label {
-                text: i18n.tr("Waydroid doesn't officially support Android versions past 11 (yet). Your device can still run unofficial Android 13 images (with some additional bugs) from <a href=\"https://sourceforge.net/projects/aleasto-lineageos/files/LineageOS 20/waydroid_arm64\">https://sourceforge.net/projects/aleasto-lineageos/files/LineageOS 20/waydroid_arm64</a> which Waydroid Helper can setup (excluding GAPPS). <br><br> Do you want to continue?")
+                text: i18n.tr("Waydroid doesn't support OTAs for Android versions past 11 just yet. Your device can still run the Android 13 images downloaded from the official SourceForge which Waydroid Helper can setup. <br><br> Do you want to continue?")
                 wrapMode: Text.Wrap
                 onLinkActivated: Qt.openUrlExternally(link)
             }
@@ -201,7 +201,6 @@ Page {
                 color: theme.palette.normal.negative
                 onClicked: {
                     needsCustomImages = true;
-                    gappsAction.visible = false;
                     PopupUtils.close(dialogueCustom);
                 }
             }

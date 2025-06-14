@@ -3,6 +3,7 @@ import sys
 import os
 import subprocess
 import shutil
+import zipfile
 sys.path.insert(1, "/usr/lib/waydroid")
 import tools as waydroid
 
@@ -82,18 +83,23 @@ args.log = args.work + "/waydroid.log"
 waydroid.helpers.logging.init(args)
 
 
-if os.path.exists("/etc/waydroid-extra/images/system.img"):
+if os.path.exists("/etc/waydroid-extra/images/vendor.img"):
     print("Already initialized")
     sys.exit(0)
 
 
 os.makedirs("/etc/waydroid-extra/images", exist_ok=True)
-custom_images_url = "https://sourceforge.net/projects/aleasto-lineageos/files/LineageOS%2020/waydroid_arm64"
-for img in ["system", "vendor"]:
-    downloaded_img = waydroid.helpers.http.download(args, f"{custom_images_url}/{img}.img/download", f"{img}.img", cache=False)
-    print(f"Validating {img} image") # stub
+images_url = "https://sourceforge.net/projects/waydroid/files/images"
+system_variant = "GAPPS" if "GAPPS" in sys.argv else "VANILLA"
+images_date = "20250614"
+for img in [f"system/lineage/waydroid_arm64/lineage-20.0-{images_date}-{system_variant}-waydroid_arm64-system",
+            f"vendor/waydroid_arm64/lineage-20.0-{images_date}-HALIUM_13-waydroid_arm64-vendor"]:
+    downloaded_zip = waydroid.helpers.http.download(args, f"{images_url}/{img}.zip/download", os.path.basename(f"{img}.zip"), cache=False)
+    print(f"Validating {'vendor' if 'vendor' in img else 'system'} image") # stub
     print("Extracting to /etc/waydroid-extra/images")
-    shutil.move(downloaded_img, f"/etc/waydroid-extra/images/{img}.img")
+    with zipfile.ZipFile(downloaded_zip, 'r') as zip_ref:
+        zip_ref.extractall("/etc/waydroid-extra/images")
+    os.remove(downloaded_zip)
 
 
 # start using downloaded custom images
