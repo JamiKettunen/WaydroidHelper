@@ -13,32 +13,23 @@ def ver(v):
 
 
 waydroid_ver = subprocess.check_output(["waydroid", "--version"]).decode()
-is_bindmnt_setup = os.path.ismount("/etc/waydroid-extra")
 wrapper_script_needed = ver(waydroid_ver) < ver("1.5.0")
 wrapper_script_exists = os.path.exists("/usr/local/bin/waydroid")
 wrapper_script_changing = wrapper_script_needed is not wrapper_script_exists
+previous_images_path = "/userdata/system-data/etc/waydroid-extra/images"
 
 
 # make / rw
 was_rw_root = False
-if not is_bindmnt_setup or wrapper_script_changing:
+if not os.path.exists("/etc/waydroid-extra") or wrapper_script_changing:
     root = os.statvfs('/')
     if root.f_flag & os.ST_RDONLY:
         subprocess.run(["mount", "-o", "remount,rw", "/"])
     else:
         was_rw_root = True
 
-
-if not is_bindmnt_setup:
-    # use userdata as backing for /etc/waydroid-extra
-    os.makedirs("/userdata/system-data/etc/waydroid-extra", exist_ok=True)
-    os.makedirs("/etc/waydroid-extra", exist_ok=True)
-    subprocess.run(["mount", "-o", "bind", "/userdata/system-data/etc/waydroid-extra", "/etc/waydroid-extra"])
-
-    # make bind-mount survive reboots
-    with open("/etc/system-image/writable-paths", "a") as f:
-        f.write("/etc/waydroid-extra auto persistent none none\n")
-
+# still needed for bind-mount to trick "waydroid init" here
+os.makedirs("/etc/waydroid-extra", exist_ok=True)
 
 if wrapper_script_needed and not wrapper_script_exists:
     # workaround having to "double-launch" every UI action
@@ -68,10 +59,22 @@ wait
 elif not wrapper_script_needed and wrapper_script_exists:
     os.remove("/usr/local/bin/waydroid")
 
-
 # we're done messing with rootfs
 if not was_rw_root:
     subprocess.run(["mount", "-o", "remount,ro", "/"])
+
+
+# any images setup by Waydroid Helper <=3.2.0 are likely unstable, clean them up and setup the new ones below
+if os.path.exists(previous_images_path):
+    shutil.rmtree(previous_images_path)
+
+# avoid potential old /etc/system-image/writable-paths artifact
+if os.path.ismount("/etc/waydroid-extra"):
+    subprocess.run(["umount", "/etc/waydroid-extra"])
+
+# trick "waydroid init" etc for the remainder of this script
+os.makedirs("/var/lib/waydroid/images", exist_ok=True)
+subprocess.run(["mount", "--bind", "/var/lib/waydroid", "/etc/waydroid-extra"])
 
 
 # prep for using waydroid download func similar to tools/__init__.py
@@ -82,13 +85,10 @@ args.timeout = 1800
 args.log = args.work + "/waydroid.log"
 waydroid.helpers.logging.init(args)
 
-
-if os.path.exists("/etc/waydroid-extra/images/vendor.img"):
+if os.path.exists("/var/lib/waydroid/images/vendor.img"):
     print("Already initialized")
     sys.exit(0)
 
-
-os.makedirs("/etc/waydroid-extra/images", exist_ok=True)
 images_url = "https://sourceforge.net/projects/waydroid/files/images"
 system_variant = "GAPPS" if "GAPPS" in sys.argv else "VANILLA"
 images_date = "20250614"
@@ -96,11 +96,16 @@ for img in [f"system/lineage/waydroid_arm64/lineage-20.0-{images_date}-{system_v
             f"vendor/waydroid_arm64/lineage-20.0-{images_date}-HALIUM_13-waydroid_arm64-vendor"]:
     downloaded_zip = waydroid.helpers.http.download(args, f"{images_url}/{img}.zip/download", os.path.basename(f"{img}.zip"), cache=False)
     print(f"Validating {'vendor' if 'vendor' in img else 'system'} image") # stub
-    print("Extracting to /etc/waydroid-extra/images")
+    print("Extracting to /var/lib/waydroid/images")
     with zipfile.ZipFile(downloaded_zip, 'r') as zip_ref:
-        zip_ref.extractall("/etc/waydroid-extra/images")
+        zip_ref.extractall("/var/lib/waydroid/images")
     os.remove(downloaded_zip)
 
 
 # start using downloaded custom images
-sys.exit(subprocess.run(["waydroid", "init", "-f"]).returncode)
+ret = subprocess.run(["waydroid", "init", "-f"]).returncode
+if ret != 0:
+    sys.exit(ret)
+
+# finally keep working by always searching for images in persistent-across-OTAs /var/lib/waydroid/images
+sys.exit(subprocess.run(["sed", "-i", "s:/etc/waydroid-extra/images:/var/lib/waydroid/images:", "/var/lib/waydroid/waydroid.cfg"]).returncode)
