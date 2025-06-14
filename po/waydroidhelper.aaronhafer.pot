@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: waydroidhelper.aaronhafer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-27 23:26+0000\n"
+"POT-Creation-Date: 2025-06-14 19:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -153,32 +153,30 @@ msgstr ""
 msgid "I understand the risk"
 msgstr ""
 
-#: ../qml/Installer.qml:177 ../qml/Installer.qml:210 ../qml/Installer.qml:253
+#: ../qml/Installer.qml:177 ../qml/Installer.qml:209 ../qml/Installer.qml:252
 #: ../qml/PasswordPrompt.qml:78
 msgid "Cancel"
 msgstr ""
 
 #: ../qml/Installer.qml:194
 msgid ""
-"Waydroid doesn't officially support Android versions past 11 (yet). Your "
-"device can still run unofficial Android 13 images (with some additional "
-"bugs) from <a href=\"https://sourceforge.net/projects/aleasto-lineageos/"
-"files/LineageOS 20/waydroid_arm64\">https://sourceforge.net/projects/aleasto-"
-"lineageos/files/LineageOS 20/waydroid_arm64</a> which Waydroid Helper can "
-"setup (excluding GAPPS). <br><br> Do you want to continue?"
+"Waydroid doesn't support OTAs for Android versions past 11 just yet. Your "
+"device can still run the Android 13 images downloaded from the official "
+"SourceForge which Waydroid Helper can setup. <br><br> Do you want to "
+"continue?"
 msgstr ""
 
 #: ../qml/Installer.qml:200
 msgid "Yes"
 msgstr ""
 
-#: ../qml/Installer.qml:239
+#: ../qml/Installer.qml:238
 msgid ""
 "You can install a special version of Waydroid that comes with google apps. "
 "(I personally do not recommend this as it will result in worse privacy.)"
 msgstr ""
 
-#: ../qml/Installer.qml:244
+#: ../qml/Installer.qml:243
 msgid "Enable GAPPS"
 msgstr ""
 

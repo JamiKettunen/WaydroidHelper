@@ -57,18 +57,15 @@ class Installer:
 
         #Initializing waydroid (downloading lineage)
         def download():
-            if needsCustomImages:
-                print("Initializing waydroid with custom images (downloading lineage)")
-                pyotherside.send('state', 'dl.init.vanilla', True)
-                child.sendline(f"python3 {self.click_rootdir}/src/waydroid-custom-init")
-            elif gAPPS == True:
+            waydroid = f"python3 {self.click_rootdir}/src/waydroid-custom-init" if needsCustomImages else "waydroid"
+            if gAPPS == True:
                 print("Initializing waydroid with GAPPS (downloading lineage)")
                 pyotherside.send('state', 'dl.init.gapps', True)
-                child.sendline("waydroid init -s GAPPS")
+                child.sendline(f"{waydroid} init -s GAPPS")
             else:
                 print("Initializing waydroid (downloading lineage)")
                 pyotherside.send('state', 'dl.init.vanilla', True)
-                child.sendline("waydroid init")
+                child.sendline(f"{waydroid} init")
 
         def dlstatus():
             print("Download status running")
