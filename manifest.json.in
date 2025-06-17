@@ -6,10 +6,10 @@
     "hooks": {
         "waydroidhelper": {
             "apparmor": "waydroidhelper.apparmor",
-            "desktop":  "waydroidhelper.desktop"
+            "desktop": "waydroidhelper.desktop"
         }
     },
-    "version": "3.2.0",
+    "version": "3.3.0",
     "maintainer": "Aaron Hafer <aaronhafer@gmx.de>",
-    "framework" : "@CLICK_FRAMEWORK@"
+    "framework": "@CLICK_FRAMEWORK@"
 }
