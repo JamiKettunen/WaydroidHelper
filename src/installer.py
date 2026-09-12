@@ -23,19 +23,26 @@ class Installer:
             return False
 
         try:
-            vndk = int(subprocess.check_output(["getprop", "ro.vndk.version"]))
+            vendor_apilevel = int(subprocess.check_output(["getprop", "ro.vndk.version"]))
         except ValueError:
-            return False
+            try:
+                vendor_apilevel = int(subprocess.check_output(["getprop", "ro.vendor.build.version.sdk"]))
+            except ValueError:
+                return False
 
-        if vndk <= 30: # only concerns Android 12, 12L & 13 atm
+        if vendor_apilevel <= 33: # only concerns Android 14+ based ports atm
             return False
 
         try:
-            c = urllib.request.urlopen("https://ota.waydro.id/vendor/waydroid_arm64/HALIUM_13.json")
+            c = urllib.request.urlopen("https://ota.waydro.id/vendor/waydroid_arm64/HALIUM_14.json")
             c.close()
             return False
         except urllib.error.HTTPError as e:
             return e.code == 404
+
+    def supports_a16_images(self) -> bool:
+        with open("/usr/lib/waydroid/tools/helpers/lxc.py", "r") as f:
+            return 'vintf' in f.read() # https://github.com/waydroid/waydroid/pull/2410 shipped on UT already
 
     def get_password_type(self):
         return password_type.get_password_type()

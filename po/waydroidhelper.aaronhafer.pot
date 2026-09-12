@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: waydroidhelper.aaronhafer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-14 19:57+0000\n"
+"POT-Creation-Date: 2026-09-14 14:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,57 +126,70 @@ msgstr ""
 msgid "Installation complete!"
 msgstr ""
 
-#: ../qml/Installer.qml:143 ../qml/Main.qml:208 ../qml/Main.qml:414
-#: ../qml/PasswordPrompt.qml:58 ../qml/Uninstaller.qml:125
+#: ../qml/Installer.qml:148 ../qml/Installer.qml:204 ../qml/Main.qml:208
+#: ../qml/Main.qml:414 ../qml/PasswordPrompt.qml:58 ../qml/Uninstaller.qml:125
 msgid "Ok"
 msgstr ""
 
-#: ../qml/Installer.qml:143 ../qml/Uninstaller.qml:125
+#: ../qml/Installer.qml:148 ../qml/Uninstaller.qml:125
 msgid "Start"
 msgstr ""
 
-#: ../qml/Installer.qml:165
+#: ../qml/Installer.qml:170
 msgid ""
 " <br><br> There is absolutely no warranty for this to work! Do not use this "
 "installer if you dont want to risk to brick your device permenantly (,which "
 "is highly unlikely though)!"
 msgstr ""
 
-#: ../qml/Installer.qml:165
+#: ../qml/Installer.qml:170
 msgid ""
 "You are about to use an experimental Waydroid installer! <br> You can check "
 "if your device is supported on <a href=\"https://devices.ubuntu-touch.io"
 "\">https://devices.ubuntu-touch.io</a>"
 msgstr ""
 
-#: ../qml/Installer.qml:171
+#: ../qml/Installer.qml:176
 msgid "I understand the risk"
 msgstr ""
 
-#: ../qml/Installer.qml:177 ../qml/Installer.qml:209 ../qml/Installer.qml:252
+#: ../qml/Installer.qml:182 ../qml/Installer.qml:237 ../qml/Installer.qml:280
 #: ../qml/PasswordPrompt.qml:78
 msgid "Cancel"
 msgstr ""
 
-#: ../qml/Installer.qml:194
+#: ../qml/Installer.qml:199
 msgid ""
-"Waydroid doesn't support OTAs for Android versions past 11 just yet. Your "
-"device can still run the Android 13 images downloaded from the official "
-"SourceForge which Waydroid Helper can setup. <br><br> Do you want to "
+"Your device needs Android 14+ images for Waydroid to work but the currently "
+"installed Ubuntu Touch build doesn't support them. <br><br> Please upgrade "
+"to 24.04-2.1 or above (alternatively switch to 24.04-2.x daily update "
+"channel) and try again!"
+msgstr ""
+
+#: ../qml/Installer.qml:221
+msgid ""
+"Waydroid doesn't support OTAs for Android versions past 13 just yet. Your "
+"device can still run unofficial Android 16 images (with some additional "
+"bugs) from <a href=\"https://volla.tech/filedump/waydroid-16\">https://volla."
+"tech/filedump/waydroid-16</a> which Waydroid Helper can setup (excluding "
+"GAPPS). <br><br> Keep in mind currently you must also add the \"Waydroid "
+"Stop app\" icon to your drawer; Waydroid sessions are still left running in "
+"the background despite the window being visually closed, and the UI cannot "
+"be brought back up conveniently otherwise afterward. <br><br> Do you want to "
 "continue?"
 msgstr ""
 
-#: ../qml/Installer.qml:200
+#: ../qml/Installer.qml:227
 msgid "Yes"
 msgstr ""
 
-#: ../qml/Installer.qml:238
+#: ../qml/Installer.qml:266
 msgid ""
 "You can install a special version of Waydroid that comes with google apps. "
 "(I personally do not recommend this as it will result in worse privacy.)"
 msgstr ""
 
-#: ../qml/Installer.qml:243
+#: ../qml/Installer.qml:271
 msgid "Enable GAPPS"
 msgstr ""
 
