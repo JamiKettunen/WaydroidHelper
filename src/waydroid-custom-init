@@ -8,20 +8,12 @@ sys.path.insert(1, "/usr/lib/waydroid")
 import tools as waydroid
 
 
-def ver(v):
-    return tuple(map(int, (v.split("."))))
-
-
-waydroid_ver = subprocess.check_output(["waydroid", "--version"]).decode()
-wrapper_script_needed = ver(waydroid_ver) < ver("1.5.0")
-wrapper_script_exists = os.path.exists("/usr/local/bin/waydroid")
-wrapper_script_changing = wrapper_script_needed is not wrapper_script_exists
 previous_images_path = "/userdata/system-data/etc/waydroid-extra/images"
 
 
 # make / rw
 was_rw_root = False
-if not os.path.exists("/etc/waydroid-extra") or wrapper_script_changing:
+if not os.path.exists("/etc/waydroid-extra"):
     root = os.statvfs('/')
     if root.f_flag & os.ST_RDONLY:
         subprocess.run(["mount", "-o", "remount,rw", "/"])
@@ -30,34 +22,6 @@ if not os.path.exists("/etc/waydroid-extra") or wrapper_script_changing:
 
 # still needed for bind-mount to trick "waydroid init" here
 os.makedirs("/etc/waydroid-extra", exist_ok=True)
-
-if wrapper_script_needed and not wrapper_script_exists:
-    # workaround having to "double-launch" every UI action
-    with open("/usr/local/bin/waydroid", "w") as f:
-        f.write("""\
-#!/bin/sh
-case "$1" in
-show-full-ui) DOUBLE_LAUNCH=1 ;;
-app)
-    case "$2" in
-    launch|intent) DOUBLE_LAUNCH=1 ;;
-    esac
-esac
-
-if [ "$(pgrep -f '/usr/bin/waydroid (show-full-ui|app (launch|intent))')" ]; then
-    unset DOUBLE_LAUNCH
-fi
-
-[ -z "$DOUBLE_LAUNCH" ] && exec /usr/bin/waydroid "$@"
-
-/usr/bin/waydroid show-full-ui &
-sleep 1
-/usr/bin/waydroid show-full-ui
-wait
-""")
-    os.chmod("/usr/local/bin/waydroid", 0o755)
-elif not wrapper_script_needed and wrapper_script_exists:
-    os.remove("/usr/local/bin/waydroid")
 
 # we're done messing with rootfs
 if not was_rw_root:
@@ -89,12 +53,10 @@ if os.path.exists("/var/lib/waydroid/images/vendor.img"):
     print("Already initialized")
     sys.exit(0)
 
-images_url = "https://sourceforge.net/projects/waydroid/files/images"
-system_variant = "GAPPS" if "GAPPS" in sys.argv else "VANILLA"
-images_date = "20250614"
-for img in [f"system/lineage/waydroid_arm64/lineage-20.0-{images_date}-{system_variant}-waydroid_arm64-system",
-            f"vendor/waydroid_arm64/lineage-20.0-{images_date}-HALIUM_13-waydroid_arm64-vendor"]:
-    downloaded_zip = waydroid.helpers.http.download(args, f"{images_url}/{img}.zip/download", os.path.basename(f"{img}.zip"), cache=False)
+images_url = "https://volla.tech/filedump/waydroid-16"
+images_date = "20260908"
+for img in [f"waydroid_arm64_only-system-{images_date}", f"waydroid_arm64_only-vendor-{images_date}"]:
+    downloaded_zip = waydroid.helpers.http.download(args, f"{images_url}/{img}.zip", os.path.basename(f"{img}.zip"), cache=False)
     print(f"Validating {'vendor' if 'vendor' in img else 'system'} image") # stub
     print("Extracting to /var/lib/waydroid/images")
     with zipfile.ZipFile(downloaded_zip, 'r') as zip_ref:

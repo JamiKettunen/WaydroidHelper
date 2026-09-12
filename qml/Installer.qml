@@ -107,7 +107,13 @@ Page {
             PopupUtils.open(dialogInstall);
             python.call('installer.needs_custom_images', [], function (needsCustom) {
                 if (needsCustom) {
-                    PopupUtils.open(dialogCustom);
+                    python.call('installer.supports_a16_images', [], function (supports_a16_images) {
+                        if (!supports_a16_images) {
+                            PopupUtils.open(dialogMustUpgrade);
+                        } else {
+                            PopupUtils.open(dialogCustom);
+                        }
+                    });
                 }
             });
         }
@@ -184,6 +190,28 @@ Page {
     }
 
     Component {
+        id: dialogMustUpgrade
+
+        Dialog {
+            id: dialogueMustUpgrade
+            title: "You must upgrade!"
+
+            Label {
+                text: i18n.tr("Your device needs Android >13 images the currently installed Ubuntu Touch build doesn't have the required OS side support bits for Waydroid. Please upgrade to 24.04-2.1 or above (or switch to 24.04-2.x daily update channel) and try again!")
+                wrapMode: Text.Wrap
+            }
+
+            Button {
+                text: i18n.tr("Ok")
+                onClicked: {
+                    PopupUtils.close(dialogueMustUpgrade);
+                    pageStack.pop();
+                }
+            }
+        }
+    }
+
+    Component {
         id: dialogCustom
 
         Dialog {
@@ -191,7 +219,7 @@ Page {
             title: "Disclaimer!"
 
             Label {
-                text: i18n.tr("Waydroid doesn't support OTAs for Android versions past 11 just yet. Your device can still run the Android 13 images downloaded from the official SourceForge which Waydroid Helper can setup. <br><br> Do you want to continue?")
+                text: i18n.tr("Waydroid doesn't support OTAs for Android versions past 13 just yet. Your device can still run unofficial Android 13 images (with some additional bugs) from <a href=\"https://volla.tech/filedump/waydroid-16\">https://volla.tech/filedump/waydroid-16</a> which Waydroid Helper can setup (excluding GAPPS). <br><br> Do you want to continue?")
                 wrapMode: Text.Wrap
                 onLinkActivated: Qt.openUrlExternally(link)
             }
@@ -201,6 +229,7 @@ Page {
                 color: theme.palette.normal.negative
                 onClicked: {
                     needsCustomImages = true;
+                    gappsAction.visible = false;
                     PopupUtils.close(dialogueCustom);
                 }
             }
