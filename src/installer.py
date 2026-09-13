@@ -64,15 +64,16 @@ class Installer:
 
         #Initializing waydroid (downloading lineage)
         def download():
-            waydroid = f"python3 {self.click_rootdir}/src/waydroid-custom-init" if needsCustomImages else "waydroid"
+            ota_server = "https://volla.tech/filedump/waydroid-16/ota" if needsCustomImages else "https://ota.waydro.id"
+            ota_args = f"-c {ota_server}/system -v {ota_server}/vendor"
             if gAPPS == True:
                 print("Initializing waydroid with GAPPS (downloading lineage)")
                 pyotherside.send('state', 'dl.init.gapps', True)
-                child.sendline(f"{waydroid} init -s GAPPS")
+                child.sendline(f"waydroid init -s GAPPS {ota_args}")
             else:
                 print("Initializing waydroid (downloading lineage)")
                 pyotherside.send('state', 'dl.init.vanilla', True)
-                child.sendline(f"{waydroid} init")
+                child.sendline(f"waydroid init {ota_args}")
 
         def dlstatus():
             print("Download status running")
