@@ -86,8 +86,7 @@ Page {
         onDownloadProgress: { // (real current, real target, real speed, string unit)
             progress.maximumValue = target
             progress.value = current;
-            unit = unit === 'kbps' ? 'KB/s' : 'MB/s';
-            if (speed > 1000 && unit === 'KB/s') {
+            if (speed > 1000 && unit === 'kB/s') {
                 speed = speed / 1000;
                 unit = 'MB/s'
             }

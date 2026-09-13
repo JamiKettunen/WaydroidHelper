@@ -94,7 +94,7 @@ class Installer:
                         # already initialized
                         break
 
-                index = child.expect(['\r\[Downloading\]\s+([\d\.]+) MB/([\d\.]+) MB\s+([\d\.]+) ([km]bps)\(approx.\)$', pexpect.EOF, pexpect.TIMEOUT], timeout=1)
+                index = child.expect(['\r\[Downloading\]\s+([\d\.]+) MB/([\d\.]+) MB\s+([\d\.]+) ([kmM][bB][p/]s)\(approx.\)$', pexpect.EOF, pexpect.TIMEOUT], timeout=2)
                 if index == 0:
                     startedDownload = True
                     if 'system' in downloaded:
@@ -107,6 +107,11 @@ class Installer:
                     speed = float(child.match.group(3))
                     unit = child.match.group(4)
 
+                    # adapt everything to https://github.com/waydroid/waydroid/commit/9ea810f for UI logic
+                    if unit == "kbps":
+                        unit = "kB/s"
+                    elif unit == "mbps":
+                        unit = "MB/s"
                     pyotherside.send('downloadProgress', progress, target, speed, unit)
 
                 index = child.expect(["Validating system image", pexpect.EOF, pexpect.TIMEOUT], timeout=0.5)
